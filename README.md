@@ -1,19 +1,28 @@
 # Overview
 
-This simple python script extracts metrics from a Trino cluster.
+This repo contains some simply python scripts for extracting metrics from a Trino cluster.
+
+## worker_stats.py
 
 First, it calls `/v1/queryState` to get the list of running queries and then for each query, 
 it calls `/v1/query/<queryId>` to get the query JSON for an individual query. The information
 it reports is extracted from the query JSON.
+
+The metrics are output on a per-worker basis.
+
+## query_stats.py
+
+This script takes a query ID as an argument and calls `/v1/query/<queryId>` to get the query
+JSON for the query. The information it reports is extracted from the query JSON.
 
 # Requirements
 
 * python3
 * requests library (`python3 -m pip install requests`)
 
-# Example
+# Examples
 
-To run, first update `config.ini` with values for your cluster. An example config for a cluster running locally:
+To run any script, first update `config.ini` with values for your cluster. An example config for a cluster running locally:
 
 ```
 [trino]
@@ -25,9 +34,9 @@ password=bob
 verify_certs=false
 ```
 
-With that in place, run it simply with: `./parse.py`
+With that in place, run one of the scripts simply with: `./worker_stats.py`
 
-Will see output similar to:
+You will see output similar to:
 
 ```
 === Query Info ===
