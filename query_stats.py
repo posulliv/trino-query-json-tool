@@ -18,6 +18,10 @@ def parse_query_json(query_json):
     print('running splits  : ', query_stats['runningDrivers'])
     print('queued splits   : ', query_stats['queuedDrivers'])
     print('blocked splits  : ', query_stats['blockedDrivers'])
+    output_stage_stats = query_json['outputStage']['stageStats']
+    print('  === output stage stats ===')
+    print('  buffered   : ', output_stage_stats['bufferedDataSize'])
+    print('  output size: ', output_stage_stats['outputDataSize'])
     stages = utils.build_stages(query_json)
     print('  === Stage Stats ===')
     for stage in stages:
