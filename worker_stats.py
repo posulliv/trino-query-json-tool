@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import argparse
 import configparser
 import json
 
@@ -36,6 +37,42 @@ def worker_stats(query_json):
             )
             workers[worker_host] = worker
 
+
+def console_stats_output(workers):
+    print (' === Per Worker Stats === ')
+
+    for worker_host in sorted(workers.keys()):
+        worker = workers.get(worker_host)
+        print('worker                    : ', worker.hostname)
+        print('  running splits          : ', worker.running_splits)
+        print('  blocked splits          : ', worker.blocked_splits)
+        print('  physical input data size: ', worker.total_physical_input)
+        print('  physical input read time: ', worker.total_physical_input_read_time)
+        print('  == catalog stats ==')
+        for catalog_name in sorted(worker.per_catalog_stats.keys()):
+            catalog_stats = worker.per_catalog_stats.get(catalog_name)
+            print('    catalog                   : ', catalog_name)
+            print('      physical input data size: ', catalog_stats['total_physical_input'])
+            print('      physical input read time: ', catalog_stats['total_physical_input_read_time'])
+            print('      input data size         : ', catalog_stats['total_input'])
+
+
+def prometheus_stats_output(workers):
+    print('this will be prometheus')
+
+def output_stats(option, workers):
+    if option == 'console':
+        console_stats_output(workers)
+    elif option == 'prometheus':
+        prometheus_stats_output(workers)
+    else:
+        print ('Invalid output option: ', option)
+
+
+parser = argparse.ArgumentParser(description='Accepted parameters')
+parser.add_argument('-o', '--output', help='Where stats are output', default = 'console')
+args = parser.parse_args()
+
 config = configparser.ConfigParser()
 config.read('config.ini')
 trino_config = config['trino']
@@ -47,19 +84,4 @@ verify_certs = trino_config['verify_certs'].lower() == 'true'
 for query in trino_api.current_queries(session, verify_certs, coordinator_uri, trino_config['user']):
     worker_stats(trino_api.get_query_json(session, verify_certs, coordinator_uri, trino_config['user'], query['queryId']))
 
-print (' === Per Worker Stats === ')
-
-for worker_host in sorted(workers.keys()):
-    worker = workers.get(worker_host)
-    print('worker                    : ', worker.hostname)
-    print('  running splits          : ', worker.running_splits)
-    print('  blocked splits          : ', worker.blocked_splits)
-    print('  physical input data size: ', worker.total_physical_input)
-    print('  physical input read time: ', worker.total_physical_input_read_time)
-    print('  == catalog stats ==')
-    for catalog_name in sorted(worker.per_catalog_stats.keys()):
-        catalog_stats = worker.per_catalog_stats.get(catalog_name)
-        print('    catalog                   : ', catalog_name)
-        print('      physical input data size: ', catalog_stats['total_physical_input'])
-        print('      physical input read time: ', catalog_stats['total_physical_input_read_time'])
-        print('      input data size         : ', catalog_stats['total_input'])
+output_stats(args.output, workers)
