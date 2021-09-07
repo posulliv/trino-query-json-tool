@@ -46,6 +46,21 @@ def build_stages(query_json):
     gather_stages(query_json['outputStage']['subStages'])
     return stages
 
+def get_table_name(stage_plan):
+    identifier = stage_plan['identifier']
+    parts = identifier.split("table = ")
+    if len(parts) > 1:
+        return parts[1].split(",")[0]
+    if len(stage_plan['children']) > 0:
+        for child in stage_plan['children']:
+            identifier = child['identifier']
+            parts = identifier.split(":")
+            if len(parts) > 1:
+                return parts[0].replace("[", "").replace("table = ", "")
+            else:
+                return get_table_name(child)
+    return identifier.replace("[", "").replace("]", "")
+
 def get_catalog_name(stage_plan):
     identifier = stage_plan['identifier']
     parts = identifier.split("table = ")
