@@ -34,13 +34,14 @@ def parse_query_json(query_json):
         if stage_catalog_name is None:
             stage_catalog_name = "UNKNOWN"
         stage_stats = stage['stageStats']
-        print('  physical input data size: ', stage_stats['physicalInputDataSize'])
-        print('  physical input read time: ', stage_stats['physicalInputReadTime'])
-        print('  total splits            : ', stage_stats['totalDrivers'])
-        print('  completed splits        : ', stage_stats['completedDrivers'])
-        print('  running splits          : ', stage_stats['runningDrivers'])
-        print('  queued splits           : ', stage_stats['queuedDrivers'])
-        print('  blocked splits          : ', stage_stats['blockedDrivers'])
+        print('  physical input data size : ', stage_stats['physicalInputDataSize'])
+        print('  physical input read time : ', stage_stats['physicalInputReadTime'])
+        print('  physical output data size: ', stage_stats['physicalWrittenDataSize'])
+        print('  total splits             : ', stage_stats['totalDrivers'])
+        print('  completed splits         : ', stage_stats['completedDrivers'])
+        print('  running splits           : ', stage_stats['runningDrivers'])
+        print('  queued splits            : ', stage_stats['queuedDrivers'])
+        print('  blocked splits           : ', stage_stats['blockedDrivers'])
         tasks = stage['tasks']
         print('    === Task Stats ===')
         for task in tasks:
@@ -48,13 +49,14 @@ def parse_query_json(query_json):
             worker_host = task['taskStatus']['self'].split("//")[1].split(":")[0]
             print('    worker is : ', worker_host)
             task_stats = task['stats']
-            print('    physical input data size: ', task_stats['physicalInputDataSize'])
-            print('    physical input read time: ', task_stats['physicalInputReadTime'])
-            print('    total splits            : ', task_stats['totalDrivers'])
-            print('    completed splits        : ', task_stats['completedDrivers'])
-            print('    running splits          : ', task_stats['runningDrivers'])
-            print('    queued splits           : ', task_stats['queuedDrivers'])
-            print('    blocked splits          : ', task_stats['blockedDrivers'])
+            print('    physical input data size : ', task_stats['physicalInputDataSize'])
+            print('    physical input read time : ', task_stats['physicalInputReadTime'])
+            print('    physical output data size: ', task_stats['physicalWrittenDataSize'])
+            print('    total splits             : ', task_stats['totalDrivers'])
+            print('    completed splits         : ', task_stats['completedDrivers'])
+            print('    running splits           : ', task_stats['runningDrivers'])
+            print('    queued splits            : ', task_stats['queuedDrivers'])
+            print('    blocked splits           : ', task_stats['blockedDrivers'])
 
 parser = argparse.ArgumentParser(description='Accepted parameters')
 parser.add_argument('-q', '--query', help='query ID', required=True)

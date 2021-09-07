@@ -35,6 +35,10 @@ def worker_stats(query_json):
             worker.add_input(stage_catalog_name, utils.parse_read_data_size(
                 task_stats['rawInputDataSize'])
             )
+            worker.add_physical_output(
+                stage_catalog_name,
+                utils.parse_read_data_size(task_stats['physicalWrittenDataSize'])
+            )
             workers[worker_host] = worker
 
 
@@ -43,18 +47,22 @@ def console_stats_output(workers):
 
     for worker_host in sorted(workers.keys()):
         worker = workers.get(worker_host)
-        print('worker                    : ', worker.hostname)
-        print('  running splits          : ', worker.running_splits)
-        print('  blocked splits          : ', worker.blocked_splits)
-        print('  physical input data size: ', worker.total_physical_input)
-        print('  physical input read time: ', worker.total_physical_input_read_time)
+        print('worker                     : ', worker.hostname)
+        print('  running splits           : ', worker.running_splits)
+        print('  blocked splits           : ', worker.blocked_splits)
+        print('  physical input data size : ', worker.total_physical_input)
+        print('  physical input read time : ', worker.total_physical_input_read_time)
+        print('  physical input throughput: ', worker.get_overall_physical_input_throughput())
+        print('  physical output data size: ', worker.total_physical_output)
         print('  == catalog stats ==')
         for catalog_name in sorted(worker.per_catalog_stats.keys()):
             catalog_stats = worker.per_catalog_stats.get(catalog_name)
-            print('    catalog                   : ', catalog_name)
-            print('      physical input data size: ', catalog_stats['total_physical_input'])
-            print('      physical input read time: ', catalog_stats['total_physical_input_read_time'])
-            print('      input data size         : ', catalog_stats['total_input'])
+            print('    catalog                    : ', catalog_name)
+            print('      physical input data size : ', catalog_stats['total_physical_input'])
+            print('      physical input read time : ', catalog_stats['total_physical_input_read_time'])
+            print('      physical input throughput: ', worker.get_physical_input_throughput(catalog_name))
+            print('      input data size          : ', catalog_stats['total_input'])
+            print('      physical output data size: ', catalog_stats['total_physical_output'])
 
 
 def prometheus_stats_output(workers):
