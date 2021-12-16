@@ -21,6 +21,8 @@ def parse_query_json(query_json):
     print('running splits  : ', query_stats['runningDrivers'])
     print('queued splits   : ', query_stats['queuedDrivers'])
     print('blocked splits  : ', query_stats['blockedDrivers'])
+    if query_json['state'] == 'FINISHED':
+        return
     stages = utils.build_stages(query_json)
     for stage in stages:
         stage_plan = json.loads(stage['plan']['jsonRepresentation'])
@@ -73,8 +75,9 @@ args = parser.parse_args()
 config = configparser.ConfigParser()
 config.read('config.ini')
 trino_config = config['trino']
+use_password = True if trino_config['http_scheme'] == 'https' else False
 
-session = trino_api.new_session(trino_config['user'], trino_config['password'])
+session = trino_api.new_session(trino_config['user'], trino_config['password'] if use_password else None)
 coordinator_uri = trino_config['http_scheme'] + '://' + trino_config['host'] + ':' + trino_config['port']
 verify_certs = trino_config['verify_certs'].lower() == 'true'
 

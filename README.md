@@ -1,6 +1,7 @@
 # Overview
 
-This repo contains some simply python scripts for extracting metrics from a Trino cluster.
+This repo contains some simple python scripts for various tasks when
+working with a Trino cluster.
 
 ## worker_stats.py
 
