@@ -16,6 +16,15 @@ The metrics are output on a per-worker basis.
 This script takes a query ID as an argument and calls `/v1/query/<queryId>` to get the query
 JSON for the query. The information it reports is extracted from the query JSON.
 
+## why_is_query_queued.py
+
+This script takes a query ID as an argument and gets resource group info for the resource
+group the query is using. It uses the `/v1/resourceGroupState/<resourceGroupId>` endpoint
+to get resource group state. 
+
+Using the info printed for the resource group, you can see what resources in the group are
+causing the query to be queued.
+
 # Requirements
 
 * python3
